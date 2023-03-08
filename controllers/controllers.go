@@ -40,8 +40,23 @@ func AddTodo(c *gin.Context) {
 	if err := c.BindJSON(&todo); err != nil {
 		log.Fatal(err.Error())
 	}
-	if err := db.Table("todos").Create(&todo); err != nil {
+	if err := db.Create(&todo); err != nil {
 		log.Fatal(err.Error)
 	}
 	c.JSON(http.StatusOK, gin.H{"data": todo})
+}
+func MyTodos(c *gin.Context) {
+	auth_id, _ := c.Params.Get("user")
+	var todos []models.Todo
+	if err := db.Find(&todos, "Author_id = ? ").Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": err})
+		return
+	}
+}
+func AllTodos(c *gin.Context) {
+	var todos []models.Todo
+	if err := db.Find(&todos).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": err})
+		return
+	}
 }
