@@ -7,4 +7,7 @@ import (
 
 func SetRoutes(r *gin.Engine) {
 	r.GET("/", controllers.Home)
+	r.GET("/todo/all", controllers.AllTodos)
+	r.GET("/todo/:user", controllers.MyTodos)
+	r.POST("/todo/new", controllers.AddTodo)
 }
