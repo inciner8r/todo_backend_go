@@ -8,7 +8,7 @@ import (
 
 func main() {
 	r := gin.Default()
-	routes.SetRoutes(r)
 	r.Use(cors.Default())
+	routes.SetRoutes(r)
 	r.Run(":8080")
 }
