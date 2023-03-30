@@ -1,6 +1,9 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"github.com/golang-jwt/jwt/v5"
+	"gorm.io/gorm"
+)
 
 type Todo struct {
 	gorm.Model
@@ -14,4 +17,12 @@ type User struct {
 	Username string
 	Email    string
 	Password string
+}
+
+type Claims struct {
+	Id uint
+	jwt.RegisteredClaims
+}
+type TokenString struct {
+	JWTString string
 }

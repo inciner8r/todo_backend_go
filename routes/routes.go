@@ -10,4 +10,7 @@ func SetRoutes(r *gin.Engine) {
 	r.GET("/todo/all", controllers.AllTodos)
 	r.GET("/todo/:user", controllers.MyTodos)
 	r.POST("/todo/new", controllers.AddTodo)
+	r.POST("/register", controllers.AddUser)
+	r.POST("/login", controllers.Login)
+	r.POST("/validateJWT", controllers.ValidateJwt)
 }
