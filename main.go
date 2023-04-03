@@ -8,7 +8,10 @@ import (
 
 func main() {
 	r := gin.Default()
-	r.Use(cors.Default())
+	config := cors.DefaultConfig()
+	config.AllowAllOrigins = true
+	config.AllowHeaders = []string{"Token"}
+	r.Use(cors.New(config))
 	routes.SetRoutes(r)
 	r.Run(":8080")
 }

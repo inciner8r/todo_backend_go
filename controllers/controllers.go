@@ -109,6 +109,10 @@ func ValidateJwt(c *gin.Context) {
 	claims := token.Claims.(*models.Claims)
 	c.JSON(http.StatusOK, gin.H{"Id": claims.Id})
 }
+
+func JwtFromHeader(c *gin.Context) []string {
+	return c.Request.Header["Token"]
+}
 func AddTodo(c *gin.Context) {
 	var todo models.Todo
 	if err := c.BindJSON(&todo); err != nil {
@@ -129,6 +133,9 @@ func MyTodos(c *gin.Context) {
 }
 func AllTodos(c *gin.Context) {
 	var todos []models.Todo
+	token := JwtFromHeader(c)
+	fmt.Println(token)
+
 	if err := db.Find(&todos).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": err})
 		return
