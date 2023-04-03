@@ -94,30 +94,31 @@ func Login(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"jwt": signedToken, "message": "logged in"})
 }
 
-func ValidateJwt(c *gin.Context) {
-	var tokenString models.TokenString
-	if err := c.BindJSON(&tokenString); err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"message": "cookie not found"})
-		return
-	}
-	token, err := jwt.ParseWithClaims(tokenString.JWTString, &models.Claims{}, func(t *jwt.Token) (interface{}, error) {
+func ValidateJwt(c *gin.Context, Token string) uint {
+	token, err := jwt.ParseWithClaims(Token, &models.Claims{}, func(t *jwt.Token) (interface{}, error) {
 		return key, nil
 	})
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"message": "unauthorized"})
 	}
 	claims := token.Claims.(*models.Claims)
-	c.JSON(http.StatusOK, gin.H{"Id": claims.Id})
+
+	return claims.Id
 }
 
 func JwtFromHeader(c *gin.Context) []string {
-	return c.Request.Header["Token"]
+	return c.Request.Header["Authorization"]
 }
 func AddTodo(c *gin.Context) {
 	var todo models.Todo
+	token := JwtFromHeader(c)
+	id := ValidateJwt(c, token[0])
+	fmt.Println(id)
+
 	if err := c.BindJSON(&todo); err != nil {
 		log.Fatal(err.Error())
 	}
+	todo.Author_id = id
 	if err := db.Create(&todo).Error; err != nil {
 		log.Fatal(err.Error())
 	}
@@ -135,11 +136,17 @@ func AllTodos(c *gin.Context) {
 	var todos []models.Todo
 	token := JwtFromHeader(c)
 	fmt.Println(token)
+	id := ValidateJwt(c, token[0])
 
-	if err := db.Find(&todos).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"message": err})
+	if err := db.Find(&todos, "Author_id = ?", id).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
+	// if err := db.Find(&todos).Error; err != nil {
+	// 	c.JSON(http.StatusBadRequest, gin.H{"message": err})
+	// 	return
+	// }
+
 	c.JSON(http.StatusOK, gin.H{"data": todos})
 }
 func DeleteTodo(c *gin.Context) {

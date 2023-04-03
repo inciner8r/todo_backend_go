@@ -9,7 +9,7 @@ type Todo struct {
 	gorm.Model
 	Title     string
 	Content   string
-	Author_id string
+	Author_id uint
 }
 type User struct {
 	gorm.Model
