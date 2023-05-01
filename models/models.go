@@ -7,9 +7,9 @@ import (
 
 type Todo struct {
 	gorm.Model
-	Title     string
 	Content   string
 	Author_id uint
+	Completed bool
 }
 type User struct {
 	gorm.Model

@@ -12,4 +12,5 @@ func SetRoutes(r *gin.Engine) {
 	r.POST("/todo/new", controllers.AddTodo)
 	r.POST("/register", controllers.AddUser)
 	r.POST("/login", controllers.Login)
+	r.DELETE("/delete", controllers.DeleteTodo)
 }
